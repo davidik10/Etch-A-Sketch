@@ -1,1 +1,1 @@
-# Etch-A-Sketch
+In this project I make a browser version of something between a sketchpad and an Etch-A-Sketch, using DOM manipulations that I've just learned.
