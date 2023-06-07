@@ -4,100 +4,27 @@
     <meta charset="UTF-8">
     <title>Etch-A-Sketch</title>
     <link rel="stylesheet" href="stylesheet.css" />
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <button class="Squares-Number">Squares Number</button>
-    <button class="Clear">Clear</button>
-    <div class="container"></div>
-    
-    <script>
-        
-        let num = 16;
-        let grid = document.querySelector('.container');
-
-        function createGrid(num) {
-            let gridWidth = 960 / num;
-            grid.style.gridTemplateColumns = `repeat(${num},${gridWidth}px)`;
-            grid.style.gridTemplateRows = `repeat(${num},${gridWidth}px)`;
-            for (let i=0; i<(num*num); i++) {
-                    const square = document.createElement('div');
-                    square.style.height = `${gridWidth}px`;
-                    square.style.width = `${gridWidth}px`;
-                    square.style.border = "solid 1px";
-                    grid.appendChild(square); 
-                    
-            }
-        }
-
-        function randomColor() {
-            const x = Math.floor(Math.random() * 256);
-            return x;
-        }
-
-        function changeColor(e) {
-            const color = {
-                R:`${randomColor()}`,
-                G:`${randomColor()}`,
-                B:`${randomColor()}`
-            }
-            //return(color);
-            e.target.style.backgroundColor = `rgb(${color.R},${color.G},${color.B})`;
-        }
-
-        function object() {
-
-        }
-
-        function blackening(changeColor) {
-            //console.log(changeColor);
-            const newX = (changeColor.x) - (0.1* changeColor.x);
-            const newY = (changeColor.y) - (0.1* changeColor.y);
-            const newZ = (changeColor.z) - (0.1* changeColor.z);
-            //console.log(`rgb(${newX},${newY},${newZ})`);
-            return `rgb(${newX},${newY},${newZ})`;
-                
-            }
-        
-        
-        function changeColorBack(e) {
-            setTimeout( ()=> {
-                e.target.style.backgroundColor = changeColor(e);
-            }, 200);
-        }
-
-        function initializeGrid() {
-            grid.innerHTML = '';
-            return grid.innerHTML;
-        }
-
-        function clearGrid(e) {
-                initializeGrid();
-                createGrid(num);
-            }
-
-        function newGrid(e) {
-            let userChoice = prompt
-            ("How many squares do you want on each side:", 16);
-            while (userChoice >= 100) {
-                userChoice = prompt
-            ("How many squares do you want on each side:", 16);
-            }
-            initializeGrid();
-            const newGrid = createGrid(userChoice);
-            return newGrid;
-        }
-
-        createGrid(num);
-
-        const squaresNumber = document.querySelector('.Squares-Number');
-        squaresNumber.addEventListener('click', newGrid);
-
-        const clear = document.querySelector('.Clear');
-        clear.addEventListener('click', clearGrid);
-        
-        grid.addEventListener('mouseover', changeColor);
-        grid.addEventListener('mouseout', changeColorBack); 
-    </script>
+    <div class="buttons">
+        <div class="size">
+            <div class="Size-Value">16 x 16</div>
+            <input class="Size-Slider" type="range" value="16" min="1" max="64" />
+        </div>
+        <button class="Black-Mode">Black-Mode</button>
+        <button class="Rainbow-Mode">Rainbow Mode</button>
+        <button class="Shading">Shading</button>
+        <!--<button class="Lightening">Lighten</button>-->
+        <button class="Eraser">Eraser</button>
+        <button class="Clear">Clear</button>
+    </div>
+    <main>
+        <h1>Etch A Sketch</h1>
+        <div class ="grid-border">
+            <div class="container"></div>
+        </div>
+    </main>
     
 </body>
 </html>
