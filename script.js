@@ -1,9 +1,9 @@
         let num = 16;
         let numNull = true;
-        let colorMode = false;
+        let rainBowMode = false;
         let blackMode = false;
         let shadingMode = false;
-        /* let lighteningMode = false; */
+        let lighteningMode = false;
         let eraserMode = false;
         let oldNum = 0;
         let grid = document.querySelector('.container');
@@ -11,14 +11,37 @@
         document.body.onmousedown = () => (mouseDown = true)
         document.body.onmouseup = () => (mouseDown = false)
 
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => 
+            button.addEventListener('click',(e) => {
+                rainBowMode = false;
+                blackMode = false;
+                shadingMode = false;
+                lighteningMode = false;
+                eraserMode = false;
+                console.log(e.target.classList.value)
+                if (e.target.classList.value === 'Black-Mode') {
+                    blackMode = true;
+                }
+                else if (e.target.classList.value === 'Rainbow-Mode') {
+                    rainBowMode = true;
+                }
+                else if (e.target.classList.value === 'Shading') {
+                    shadingMode = true;
+                }
+                else if (e.target.classList.value === 'Lightening') {
+                    lighteningMode = true;
+                }
+                else if (e.target.classList.value === 'Eraser') {
+                    eraserMode = true;
+                }
+                else if (e.target.classList.value === 'Clear') {
+                    clearGrid(e);
+                }
+        }));
+
         const sizeValue = document.querySelector('.Size-Value');
         const sizeSlider = document.querySelector('.Size-Slider');
-        const rainbow = document.querySelector('.Rainbow-Mode');
-        const black = document.querySelector('.Black-Mode');
-        const shading = document.querySelector('.Shading');
-        /* const lightening = document.querySelector('.Lightening'); */
-        const eraser = document.querySelector('.Eraser');
-        const clear = document.querySelector('.Clear');
 
         function createGrid(num) {
             let gridWidth = 960 / num;
@@ -34,128 +57,90 @@
             }
         }
 
-        function randomColor() {
-            const random = Math.floor(Math.random() * 256);
+        function randomColor(value) {
+            const random = Math.floor(Math.random() * (value+1));
             return random;
         }
 
-        function rainbowColors(e) {
-            rainbow.style.backgroundColor ='red';
-            black.style.backgroundColor ='rgb(224, 208, 208)';
-            shading.style.backgroundColor ='rgb(224, 208, 208)';
-            /* lightening.style.backgroundColor ='rgb(224, 208, 208)'; */
-            eraser.style.backgroundColor ='rgb(224, 208, 208)';
-            colorMode = true;
-            blackMode = false;
-            eraserMode = false;
-            shadingMode = false;
-            /* lighteningMode = false; */
-            return colorMode;
-        }
-
-        function switchToBlack(e) {
-            rainbow.style.backgroundColor ='rgb(224, 208, 208)';
-            black.style.backgroundColor ='red';
-            shading.style.backgroundColor ='rgb(224, 208, 208)';
-            /* lightening.style.backgroundColor ='rgb(224, 208, 208)'; */
-            eraser.style.backgroundColor ='rgb(224, 208, 208)';
-            blackMode = true;
-            colorMode = false;
-            eraserMode = false;
-            shadingMode = false;
-            /* lighteningMode = false; */
-            return blackMode;
-        }
-
-        function shadingFunc(e) {
-            rainbow.style.backgroundColor ='rgb(224, 208, 208)';
-            black.style.backgroundColor ='rgb(224, 208, 208)';
-            shading.style.backgroundColor ='red';
-            /* lightening.style.backgroundColor ='rgb(224, 208, 208)'; */
-            eraser.style.backgroundColor ='rgb(224, 208, 208)';
-            eraserMode = false;
-            blackMode = false;
-            colorMode = false;
-            shadingMode = true;
-            /* lighteningMode = false; */
-            return shadingMode;
-        }
-
-      /*   function lighteningFunc(e) {
-            rainbow.style.backgroundColor ='rgb(224, 208, 208)';
-            black.style.backgroundColor ='rgb(224, 208, 208)';
-            shading.style.backgroundColor ='rgb(224, 208, 208)';
-            lightening.style.backgroundColor ='red';
-            eraser.style.backgroundColor ='rgb(224, 208, 208)';
-            eraserMode = false;
-            blackMode = false;
-            colorMode = false;
-            shadingMode = false;
-            lighteningMode = true;
-            return lighteningMode;
-        } */
-
-        function switchToErase(e) {
-            rainbow.style.backgroundColor ='rgb(224, 208, 208)';
-            black.style.backgroundColor ='rgb(224, 208, 208)';
-            shading.style.backgroundColor ='rgb(224, 208, 208)';
-            /* lightening.style.backgroundColor ='rgb(224, 208, 208)'; */
-            eraser.style.backgroundColor ='red';
-            eraserMode = true;
-            blackMode = false;
-            colorMode = false;
-            shadingMode = false;
-            /* lighteningMode = false; */
-            return eraserMode;
-        }
-
-        
-
         function getColor(e) {
             const currentColor = window.getComputedStyle(e.target).backgroundColor;
-            let rgbValues = currentColor.match(/\d+/g);
-            //console.table(rgbValues);
+            let hslValues = currentColor.match(/\d+/g);
             if (e.target.style.backgroundColor === ``) {
-                rgbValues = [255,255,255];
+                hslValues = [0, 0, 100];
             }
-            return rgbValues;
+            else {
+                hslValues = rgb2hsl(hslValues[0], hslValues[1], hslValues[2]);
+            }
+            return hslValues;
+        }
+
+        function rgb2hsl(r, g, b) {
+            // see https://en.wikipedia.org/wiki/HSL_and_HSV#Formal_derivation
+            // convert r,g,b [0,255] range to [0,1]
+            r = r / 255,
+            g = g / 255,
+            b = b / 255;
+            // get the min and max of r,g,b
+            var max = Math.max(r, g, b);
+            var min = Math.min(r, g, b);
+            // lightness is the average of the largest and smallest color components
+            var lum = (max + min) / 2;
+            var hue;
+            var sat;
+            if (max == min) { // no saturation
+                hue = 0;
+                sat = 0;
+            } else {
+                var c = max - min;
+                sat = c / (1 - Math.abs(2 * lum - 1));
+                switch(max) {
+                    case r:
+                         hue = (g - b) / c;
+                         hue = ((g - b) / c) % 6;
+                         hue = (g - b) / c + (g < b ? 6 : 0);
+                        break;
+                    case g:
+                        hue = (b - r) / c + 2;
+                        break;
+                    case b:
+                        hue = (r - g) / c + 4;
+                        break;
+                }
+            }
+            hue = Math.round(hue * 60); // °
+            sat = Math.round(sat * 100); // %
+            lum = Math.round(lum * 100); // %
+            return [hue, sat, lum];
         }
         
         function changeColor(e) {
             if (e.type === 'mouseover' && !mouseDown) return;
-            let rgb = getColor(e);
-            r = rgb[0];
-            g = rgb[1];
-            b = rgb[2];
+            let hsl = getColor(e);
+            h = hsl[0];
+            s = hsl[1];
+            l = hsl[2];
+            
             if (eraserMode === true) {
                 e.target.style.backgroundColor = '';
             }
-            else if (colorMode === true) {
-                r = randomColor();
-                g = randomColor();
-                b = randomColor();
+            else if (rainBowMode === true) {
+                h = randomColor(359);
+                s = randomColor(100);
+                l = randomColor(100);
                  e.target.style.backgroundColor = 
-                 `rgb(${r},${g},${b})`;
+                 `hsl(${h},${s}%,${l}%)`;
             }
             else if (blackMode === true) {
                 e.target.style.backgroundColor = `black`;
             }
             else if (shadingMode === true) {
-                console.log(rgb)
-                r-= 26;
-                g-= 26;
-                b-= 26;
-                console.log(rgb)
-                e.target.style.backgroundColor =`rgb(${r},${g},${b})`;
+                l-= 10;
+                e.target.style.backgroundColor =`hsl(${h},${s}%,${l}%)`;
             }
-            //else if (lighteningMode === true) {
-            /*     console.log(rgb)
-                r= Math.min(r+26,255);
-                g= Math.min(g+26,255);
-                b= Math.min(b+26,255);
-                e.target.style.backgroundColor =`rgb(${r},${g},${b})`;
-                console.log(e.target.style.backgroundColor);
-            } */   
+            else if (lighteningMode === true) {
+                l+= 10;
+                e.target.style.backgroundColor =`hsl(${h},${s}%,${l}%)`;
+            }   
         }
     
     
@@ -186,19 +171,13 @@
 
         createGrid(num);
 
-        let r=0;
-        let g=0;
-        let b=0;
+        let h=0;
+        let s=0;
+        let l=0;
 
         sizeSlider.addEventListener('mousemove',updateSizeValue);
         sizeSlider.addEventListener('change',changeSize);
-        clear.addEventListener('click', clearGrid);
-        rainbow.addEventListener('click', rainbowColors);
-        black.addEventListener('click', switchToBlack);
-        shading.addEventListener('click', shadingFunc);
-        /* lightening.addEventListener('click', lighteningFunc); */
-        eraser.addEventListener('click', switchToErase);
-        
+
         grid.addEventListener('mouseover', changeColor);
         grid.addEventListener('mousedown', changeColor);
         
