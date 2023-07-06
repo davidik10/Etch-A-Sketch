@@ -7,9 +7,6 @@
         let eraserMode = false;
         let oldNum = 0;
         let grid = document.querySelector('.container');
-        let mouseDown = false
-        document.body.onmousedown = () => (mouseDown = true)
-        document.body.onmouseup = () => (mouseDown = false)
 
         const buttons = document.querySelectorAll('button');
         buttons.forEach(button => 
@@ -114,7 +111,6 @@
         }
         
         function changeColor(e) {
-            if (e.type === 'mouseover' && !mouseDown) return;
             let hsl = getColor(e);
             h = hsl[0];
             s = hsl[1];
@@ -179,5 +175,3 @@
         sizeSlider.addEventListener('change',changeSize);
 
         grid.addEventListener('mouseover', changeColor);
-        grid.addEventListener('mousedown', changeColor);
-        
